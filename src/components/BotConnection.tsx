@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { LoadingSpinner } from './LoadingSpinner';
 
-export function BotConnection() {
+export default function BotConnection() {
   const [botToken, setBotToken] = useState('');
   const [testMessage, setTestMessage] = useState('');
   const [status, setStatus] = useState('');
