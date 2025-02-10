@@ -1,8 +1,6 @@
 
 import React from 'react';
 
-import React from 'react';
-
 export const LoadingSpinner = React.memo(function LoadingSpinner() {
   return (
     <div className="flex flex-col items-center justify-center p-4">
