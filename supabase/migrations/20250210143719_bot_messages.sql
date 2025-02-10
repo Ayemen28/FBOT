@@ -11,9 +11,14 @@ CREATE TABLE IF NOT EXISTS bot_messages (
 ALTER TABLE bot_messages ENABLE ROW LEVEL SECURITY;
 
 -- Create policy
-CREATE POLICY "Enable full access to all users"
+CREATE POLICY "Enable read access for all users"
   ON bot_messages
-  FOR ALL 
+  FOR SELECT
   TO authenticated
-  USING (true)
+  USING (true);
+
+CREATE POLICY "Enable insert access for all users"
+  ON bot_messages
+  FOR INSERT
+  TO authenticated
   WITH CHECK (true);
