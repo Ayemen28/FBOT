@@ -8,62 +8,84 @@ export default function BotConnection() {
   const [testMessage, setTestMessage] = useState('');
   const [status, setStatus] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
-
   const [isLoading, setIsLoading] = useState(true);
+  const [connectionStatus, setConnectionStatus] = useState<'success' | 'error' | null>(null);
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        setIsLoading(true);
-        await Promise.all([loadBotToken(), loadRecentMessages()]);
-      } catch (error) {
-        console.error('Error loading data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
     loadData();
   }, []);
 
-  if (isLoading) {
-    return <LoadingSpinner />;
+  async function loadData() {
+    try {
+      setIsLoading(true);
+      await Promise.all([loadBotToken(), loadRecentMessages()]);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   async function loadBotToken() {
-    const { data, error } = await supabase
-      .from('bot_settings')
-      .select('*')
-      .single();
-    
-    if (data?.bot_token) {
-      setBotToken(data.bot_token);
-    } else if (error) {
+    try {
+      const { data, error } = await supabase
+        .from('bot_settings')
+        .select('*')
+        .single();
+      
+      if (error) throw error;
+      if (data?.bot_token) {
+        setBotToken(data.bot_token);
+      }
+    } catch (error) {
       console.error('Error loading bot token:', error);
       setStatus('خطأ في تحميل التوكن');
     }
   }
 
-  async function loadRecentMessages() {
-    const { data, error } = await supabase
-      .from('bot_messages')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(10);
+  async function checkConnection() {
+    try {
+      const { data, error } = await supabase
+        .from('bot_settings')
+        .select('count')
+        .limit(1);
 
-    if (data) {
-      setMessages(data);
+      if (error) throw error;
+      setConnectionStatus('success');
+      setStatus('تم الاتصال بقاعدة البيانات بنجاح');
+    } catch (error) {
+      setConnectionStatus('error');
+      setStatus('فشل الاتصال بقاعدة البيانات');
+    }
+  }
+
+  async function loadRecentMessages() {
+    try {
+      const { data, error } = await supabase
+        .from('bot_messages')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      if (data) {
+        setMessages(data);
+      }
+    } catch (error) {
+      console.error('Error loading messages:', error);
     }
   }
 
   async function saveBotToken() {
-    const { error } = await supabase
-      .from('bot_settings')
-      .upsert({ bot_token: botToken });
+    try {
+      const { error } = await supabase
+        .from('bot_settings')
+        .upsert({ bot_token: botToken });
 
-    if (error) {
-      setStatus('حدث خطأ في حفظ التوكن');
-    } else {
+      if (error) throw error;
       setStatus('تم حفظ التوكن بنجاح');
+    } catch (error) {
+      setStatus('حدث خطأ في حفظ التوكن');
     }
   }
 
@@ -79,7 +101,7 @@ export default function BotConnection() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          chat_id: '@your_channel_name', // قم بتغيير هذا إلى معرف القناة الخاص بك
+          chat_id: '@your_channel_name',
           text: testMessage || 'رسالة اختبار',
         }),
       });
@@ -103,11 +125,34 @@ export default function BotConnection() {
     }
   }
 
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <div className="space-y-6 p-6">
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">إعدادات البوت</h2>
         <div className="space-y-4">
+          <button
+            onClick={checkConnection}
+            className={`px-4 py-2 rounded text-white ${
+              connectionStatus === 'success' ? 'bg-green-600' :
+              connectionStatus === 'error' ? 'bg-red-600' :
+              'bg-blue-600'
+            }`}
+          >
+            تحقق من الاتصال
+          </button>
+          {status && (
+            <div className={`mt-2 text-sm ${
+              connectionStatus === 'success' ? 'text-green-600' :
+              connectionStatus === 'error' ? 'text-red-600' :
+              'text-gray-600'
+            }`}>
+              {status}
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               توكن البوت
@@ -148,11 +193,6 @@ export default function BotConnection() {
           >
             إرسال رسالة اختبار
           </button>
-          {status && (
-            <div className="mt-2 text-sm text-gray-600">
-              {status}
-            </div>
-          )}
         </div>
       </div>
 
