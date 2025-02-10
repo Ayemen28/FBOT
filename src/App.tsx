@@ -1,5 +1,6 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { Layout, BarChart3, Users, Settings, MessageSquare, Activity, Link, Menu, X, Bell, Shield, Tags, BookTemplate as Template, Bot, Database } from 'lucide-react';
+import { LoadingSpinner } from './components/LoadingSpinner';
 const BotConnection = lazy(() => import('./components/BotConnection'));
 
 // Mock data for demonstration
