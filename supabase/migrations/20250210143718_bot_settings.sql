@@ -1,4 +1,5 @@
 
+-- Create bot settings table
 CREATE TABLE IF NOT EXISTS bot_settings (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   bot_token text NOT NULL,
@@ -6,10 +7,13 @@ CREATE TABLE IF NOT EXISTS bot_settings (
   updated_at timestamptz DEFAULT now()
 );
 
+-- Enable RLS
 ALTER TABLE bot_settings ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can manage bot settings"
+-- Create policy
+CREATE POLICY "Enable full access to all users"
   ON bot_settings
-  FOR ALL
+  FOR ALL 
   TO authenticated
-  USING (true);
+  USING (true)
+  WITH CHECK (true);

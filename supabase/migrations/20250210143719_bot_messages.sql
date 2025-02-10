@@ -1,4 +1,5 @@
 
+-- Create bot messages table
 CREATE TABLE IF NOT EXISTS bot_messages (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   message text NOT NULL,
@@ -6,10 +7,13 @@ CREATE TABLE IF NOT EXISTS bot_messages (
   created_at timestamptz DEFAULT now()
 );
 
+-- Enable RLS
 ALTER TABLE bot_messages ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can manage bot messages"
+-- Create policy
+CREATE POLICY "Enable full access to all users"
   ON bot_messages
-  FOR ALL
+  FOR ALL 
   TO authenticated
-  USING (true);
+  USING (true)
+  WITH CHECK (true);
