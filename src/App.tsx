@@ -30,7 +30,7 @@ function App() {
     { id: 'integrations', label: 'التكامل', icon: <Link className="w-5 h-5" /> },
     { id: 'security', label: 'الأمان والصلاحيات', icon: <Shield className="w-5 h-5" /> },
     { id: 'ai', label: 'الذكاء الاصطناعي', icon: <Bot className="w-5 h-5" /> },
-    { id: 'bot', label: 'اتصال البوت', icon: <MessageSquare className="w-5 h-5" /> }> },
+    { id: 'bot', label: 'اتصال البوت', icon: <MessageSquare className="w-5 h-5" /> },
     { id: 'backup', label: 'النسخ الاحتياطي', icon: <Database className="w-5 h-5" /> },
     { id: 'activity', label: 'سجل النشاط', icon: <Activity className="w-5 h-5" /> },
   ];
