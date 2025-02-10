@@ -32,11 +32,14 @@ export default function BotConnection() {
   async function loadBotToken() {
     const { data, error } = await supabase
       .from('bot_settings')
-      .select('bot_token')
+      .select('*')
       .single();
     
     if (data?.bot_token) {
       setBotToken(data.bot_token);
+    } else if (error) {
+      console.error('Error loading bot token:', error);
+      setStatus('خطأ في تحميل التوكن');
     }
   }
 
@@ -65,6 +68,10 @@ export default function BotConnection() {
   }
 
   async function sendTestMessage() {
+    if (!botToken) {
+      setStatus('الرجاء إدخال توكن البوت أولاً');
+      return;
+    }
     try {
       const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: 'POST',
@@ -72,8 +79,8 @@ export default function BotConnection() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          chat_id: '@your_channel',
-          text: testMessage,
+          chat_id: '@your_channel_name', // قم بتغيير هذا إلى معرف القناة الخاص بك
+          text: testMessage || 'رسالة اختبار',
         }),
       });
 
