@@ -125,6 +125,8 @@ function App() {
             </div>
           </div>
         );
+      case 'bot':
+        return <BotConnection />;
       default:
         return (
           <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
