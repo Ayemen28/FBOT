@@ -1,0 +1,98 @@
+إليك كيفية تنفيذ الميزات المطلوبة باستخدام Node.js مع مكتبة node-telegram-bot-api:
+
+
+---
+
+1. إدارة القنوات
+
+🔹 إضافة قناة جديدة والتحقق من صلاحيات البوت
+
+يجب أن يكون البوت مشرفًا في القناة ليتمكن من إدارتها، ويمكنك التحقق من ذلك عبر الكود التالي:
+
+const TelegramBot = require("node-telegram-bot-api");
+
+const TOKEN = "YOUR_BOT_TOKEN";
+const bot = new TelegramBot(TOKEN, { polling: true });
+
+async function checkBotAdmin(chatId) {
+    try {
+        const admins = await bot.getChatAdministrators(chatId);
+        return admins.some(admin => admin.user.id === bot.id);
+    } catch (error) {
+        console.error("خطأ أثناء جلب المشرفين:", error);
+        return false;
+    }
+}
+
+// تحقق مما إذا كان البوت مشرفًا في القناة
+const channelId = "@your_channel";
+checkBotAdmin(channelId).then(isAdmin => {
+    console.log(isAdmin ? "✅ البوت لديه صلاحيات الإدارة" : "❌ يجب ترقية البوت إلى مشرف");
+});
+
+
+---
+
+2. سحب البيانات من القنوات
+
+🔹 جلب معلومات القناة مثل عدد المشتركين واسم القناة
+
+async function getChannelInfo(chatId) {
+    try {
+        const chat = await bot.getChat(chatId);
+        console.log(`📢 اسم القناة: ${chat.title}`);
+        console.log(`👥 عدد المشتركين: ${chat.members_count || "غير متاح"}`);
+    } catch (error) {
+        console.error("❌ خطأ أثناء جلب معلومات القناة:", error);
+    }
+}
+
+// استدعاء الوظيفة لمعرفة بيانات القناة
+getChannelInfo("@your_channel");
+
+
+---
+
+3. عرض صلاحيات البوت في القناة
+
+🔹 عرض صلاحيات البوت في القنوات المرتبطة
+
+async function getBotPermissions(chatId) {
+    try {
+        const admins = await bot.getChatAdministrators(chatId);
+        const botAdmin = admins.find(admin => admin.user.id === bot.id);
+        
+        if (botAdmin) {
+            console.log("✅ صلاحيات البوت:");
+            console.log(`🔹 إرسال الرسائل: ${botAdmin.can_post_messages ? "نعم" : "لا"}`);
+            console.log(`🔹 حذف الرسائل: ${botAdmin.can_delete_messages ? "نعم" : "لا"}`);
+            console.log(`🔹 تثبيت الرسائل: ${botAdmin.can_pin_messages ? "نعم" : "لا"}`);
+            console.log(`🔹 إدارة الأعضاء: ${botAdmin.can_invite_users ? "نعم" : "لا"}`);
+        } else {
+            console.log("❌ البوت ليس مشرفًا في هذه القناة.");
+        }
+    } catch (error) {
+        console.error("❌ خطأ أثناء جلب الصلاحيات:", error);
+    }
+}
+
+// استدعاء الوظيفة لجلب صلاحيات البوت في قناة معينة
+getBotPermissions("@your_channel");
+
+
+---
+
+📌 ملاحظات
+
+تأكد من أن البوت تمت ترقيته إلى مشرف في القناة.
+
+قم باستبدال "YOUR_BOT_TOKEN" بتوكن البوت الخاص بك.
+
+استخدم معرف القناة الصحيح (مثلاً @channel_username أو -1001234567890).
+
+
+
+---
+
+🚀 بهذه الطريقة، يمكنك إدارة قنوات تيليجرام وسحب بياناتها وعرض صلاحيات البوت باستخدام Node.js! 🎯
+
