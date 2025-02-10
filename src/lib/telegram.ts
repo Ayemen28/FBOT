@@ -46,7 +46,14 @@ export async function getBotPermissions(channelId: string) {
   }
 }
 
+const cache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 export async function getChannelInfo(channelId: string) {
+  const cached = cache.get(channelId);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data;
+  }
   try {
     const response = await fetch(`${API_BASE}/getChat?chat_id=${channelId}`);
     const data = await response.json();

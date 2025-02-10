@@ -57,7 +57,7 @@ export function UserManagement({ channelId }: Props) {
   };
 
   if (loading) {
-    return <div className="p-8 text-center">جاري التحميل...</div>;
+    return <LoadingSpinner />;
   }
 
   if (error) {

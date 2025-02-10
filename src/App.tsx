@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { Layout, BarChart3, Users, Settings, MessageSquare, Activity, Link, Menu, X, Bell, Shield, Tags, BookTemplate as Template, Bot, Database } from 'lucide-react';
 
 // Mock data for demonstration
@@ -209,7 +209,7 @@ function App() {
               </button>
             </div>
           </div>
-          
+
           {/* Content */}
           {renderContent()}
         </div>
