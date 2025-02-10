@@ -7,5 +7,11 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true
+  },
+  db: {
+    schema: 'public'
+  },
+  global: {
+    headers: { 'x-my-custom-header': 'my-app-name' }
   }
 });

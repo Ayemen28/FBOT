@@ -1,11 +1,13 @@
 
 import React from 'react';
 
-export function LoadingSpinner() {
+import React from 'react';
+
+export const LoadingSpinner = React.memo(function LoadingSpinner() {
   return (
-    <div className="flex flex-col items-center justify-center p-8">
-      <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
-      <p className="mt-4 text-gray-600">جاري التحميل...</p>
+    <div className="flex flex-col items-center justify-center p-4">
+      <div className="animate-spin rounded-full h-8 w-8 border-3 border-blue-600 border-t-transparent"></div>
+      <p className="mt-2 text-sm text-gray-600">جاري التحميل...</p>
     </div>
   );
-}
+});
