@@ -1,6 +1,6 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { Layout, BarChart3, Users, Settings, MessageSquare, Activity, Link, Menu, X, Bell, Shield, Tags, BookTemplate as Template, Bot, Database } from 'lucide-react';
-import { BotConnection } from './components/BotConnection';
+const BotConnection = lazy(() => import('./components/BotConnection'));
 
 // Mock data for demonstration
 const mockChannels = [
@@ -126,7 +126,11 @@ function App() {
           </div>
         );
       case 'bot':
-        return <BotConnection />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <BotConnection />
+          </Suspense>
+        );
       default:
         return (
           <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
@@ -146,7 +150,7 @@ function App() {
           <h1 className="text-2xl font-bold text-gray-800">لوحة التحكم</h1>
         </div>
         <nav className="flex-1 overflow-y-auto">
-          {menuItems.map((item) => (
+          {React.useMemo(() => menuItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveSection(item.id)}
@@ -158,7 +162,7 @@ function App() {
               {item.icon}
               <span>{item.label}</span>
             </button>
-          ))}
+          )), [activeSection])}
         </nav>
       </aside>
 
