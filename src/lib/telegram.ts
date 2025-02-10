@@ -3,13 +3,64 @@ import { supabase } from './supabase';
 const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
 const API_BASE = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
+export async function checkBotAdmin(channelId: string) {
+  try {
+    const response = await fetch(`${API_BASE}/getChatAdministrators?chat_id=${channelId}`);
+    const data = await response.json();
+    
+    if (data.ok) {
+      return data.result.some((admin: any) => 
+        admin.user.username === BOT_TOKEN.split(':')[0]
+      );
+    }
+    return false;
+  } catch (error) {
+    console.error('Error checking bot admin status:', error);
+    return false;
+  }
+}
+
+export async function getBotPermissions(channelId: string) {
+  try {
+    const response = await fetch(`${API_BASE}/getChatAdministrators?chat_id=${channelId}`);
+    const data = await response.json();
+    
+    if (data.ok) {
+      const botAdmin = data.result.find((admin: any) => 
+        admin.user.username === BOT_TOKEN.split(':')[0]
+      );
+      
+      if (botAdmin) {
+        return {
+          can_post_messages: botAdmin.can_post_messages || false,
+          can_delete_messages: botAdmin.can_delete_messages || false,
+          can_pin_messages: botAdmin.can_pin_messages || false,
+          can_invite_users: botAdmin.can_invite_users || false
+        };
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting bot permissions:', error);
+    return null;
+  }
+}
+
 export async function getChannelInfo(channelId: string) {
   try {
     const response = await fetch(`${API_BASE}/getChat?chat_id=${channelId}`);
     const data = await response.json();
     
     if (data.ok) {
-      return data.result;
+      const channelData = data.result;
+      const isAdmin = await checkBotAdmin(channelId);
+      const permissions = isAdmin ? await getBotPermissions(channelId) : null;
+      
+      return {
+        ...channelData,
+        bot_is_admin: isAdmin,
+        bot_permissions: permissions
+      };
     }
     throw new Error(data.description);
   } catch (error) {
