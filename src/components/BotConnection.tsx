@@ -8,10 +8,25 @@ export function BotConnection() {
   const [status, setStatus] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    loadBotToken();
-    loadRecentMessages();
+    async function loadData() {
+      try {
+        setIsLoading(true);
+        await Promise.all([loadBotToken(), loadRecentMessages()]);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
   }, []);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   async function loadBotToken() {
     const { data, error } = await supabase
