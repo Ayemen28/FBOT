@@ -150,7 +150,7 @@ function App() {
           <h1 className="text-2xl font-bold text-gray-800">لوحة التحكم</h1>
         </div>
         <nav className="flex-1 overflow-y-auto">
-          {menuItems.map((item) => (
+          {React.useMemo(() => menuItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveSection(item.id)}
