@@ -1,5 +1,5 @@
 
-CREATE TABLE bot_settings (
+CREATE TABLE IF NOT EXISTS bot_settings (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   bot_token text NOT NULL,
   created_at timestamptz DEFAULT now(),

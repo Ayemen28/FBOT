@@ -1,5 +1,5 @@
 
-CREATE TABLE bot_messages (
+CREATE TABLE IF NOT EXISTS bot_messages (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   message text NOT NULL,
   status text NOT NULL,
